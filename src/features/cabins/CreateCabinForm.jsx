@@ -50,7 +50,7 @@ const Error = styled.span`
 function CreateCabinForm() {
   //React hook form
   const { register, handleSubmit, reset, getValues, formState } = useForm();
-  const { errors } = formState;
+  const { errors } = formState; //this hanldes the errors (from React hook form)
   console.log(errors);
   const queryClient = useQueryClient();
   const { isLoading: isCreating, mutate } = useMutation({
@@ -71,7 +71,16 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data) {
-    mutate(data);
+    if (!data.image || !data.image[0]) {
+      console.error("Image file is missing");
+      return;
+    }
+    //image: data.image.at[0] we have to write like this because type=fle return list of files but we need single so thats why we are using at[0]
+    mutate({
+      ...data,
+
+      image: data.image[0], // Keep the image as a File object
+    });
     console.log(data);
   }
   function OnError(errors) {
@@ -121,7 +130,6 @@ function CreateCabinForm() {
         <Input
           type="number"
           id="discount"
-          defaultValue={0}
           {...register("discount", {
             required: "Discount is required",
 
@@ -145,7 +153,15 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo" error={errors?.image?.message}>
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          type="file"
+          {...register("image", {
+            required: "Image is required",
+            validate: (files) => files?.length > 0 || "You must upload a file",
+          })}
+        />
       </FormRow>
 
       <FormRow>

@@ -35,12 +35,12 @@ const Error = styled.span`
   font-size: 1.4rem;
   color: var(--color-red-700);
 `;
-
+//this Reusable component help us to not write explicitly label and the Error message in the form and Clean Code Practice
 function FormRow({ label, error, children }) {
   return (
     <StyledFormRow>
       {label && <Label htmlFor={children.props.id}>{label}</Label>}
-      {children}
+      {children} {/* this is input tag */}
       {error && <Error>{error}</Error>}
     </StyledFormRow>
   );
